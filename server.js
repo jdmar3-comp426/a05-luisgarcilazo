@@ -1,23 +1,21 @@
 // Define app using express
-var express = require("express");
-var app = express();
+const express = require("express")
+const app = express()
 // Require database SCRIPT file
-var db = require("./database.js");
-
+const db = require("./database.js")
 // Require md5 MODULE
-var md5 = require("md5");
+const md5 = require("md5")
 //Require cors module
-const cors = require("cors");
-//USE CORS
-app.use(cors());
+const cors = require("cors")
 // Make Express use its own built-in body parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+//USE CORS
+app.use(cors());
 // Set server port
-var HTTP_PORT = 5000;
+var HTTP_PORT = 5000
 // Start server
-app.listen(HTTP_PORT, () => {
+const server = app.listen(HTTP_PORT, () => {
     console.log("Server running on port %PORT%".replace("%PORT%",HTTP_PORT))
 });
 // READ (HTTP method GET) at root endpoint /app/
@@ -29,6 +27,7 @@ app.get("/app/", (req, res, next) => {
 // Define other CRUD API endpoints using express.js and better-sqlite3
 // CREATE a new user (HTTP method POST) at endpoint /app/new/
 app.post("/app/new/user", (req,res,next) => {
+	console.log(req.body)
 	const stmt = db.prepare("INSERT INTO userinfo (user, pass, email) VALUES (?, ?, ?)");
 	const info = stmt.run(req.body.user, md5(req.body.pass), req.body.email);
 	res.status(201).json({"message": info.changes+ " record created: ID " + info.lastInsertRowid + " (201)"});
@@ -60,6 +59,6 @@ app.delete("/app/delete/user/:id", (req,res) => {
 });
 // Default response for any other request
 app.use(function(req, res){
-	res.json({"message":"Your API is working!"});
+	res.json({"message":"Endpoint not found. (404)"});
     res.status(404);
 });
